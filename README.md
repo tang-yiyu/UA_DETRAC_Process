@@ -8,7 +8,7 @@ Preprocess the UA-DETRAC dataset and create a dataset for YOLOv5.
 2. Use `rename_image.py` to rename the images in the dataset.
 3. Use `xml2txt.py` to convert the xml files in the dataset to txt files.
 4. Use `rename_txt.py` to rename the txt files in the dataset.
-5. (Optional)Reorganize the dataset and divide it into training, validation, and testing sets according to a certain proportion.
+5. (Optional)Use `split_data.py` to reorganize the dataset and divide it into training, validation, and testing sets according to a certain proportion. The method I adopted is to keep the original training set unchanged, and the original test set is divided into a new validation set and a test set in a 1:1 ratio.
 
 ## Reference
 1. [使用yolov5训练UA-DETRAC车辆数据集](https://zhuanlan.zhihu.com/p/373096271)
