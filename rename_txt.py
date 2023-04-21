@@ -1,5 +1,5 @@
 '''
-code by zzg@2021/05/10
+rename label files in a directory
 '''
 import os.path as osp
 import os
