@@ -8,17 +8,17 @@ import shutil
 import re
 import sys
 
-FLAG = 0
+FLAG = 0 # 0: test 1: train
 if FLAG == 1:
 
     ##train
-    src_dir = "D:/MyWork/Project/UA-DETRAC/Train_DETRAC_TXT" #image
-    dst_dir = "D:/MyWork/Project/UA-DETRAC/scripts/Train_TXT_SELECT"
+    src_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/Train_DETRAC_TXT"
+    dst_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/train_label_txt"
 
 else:
     ##test
-    src_dir = "D:/MyWork/Project/UA-DETRAC/Test_DETRAC_TXT" #image
-    dst_dir = "D:/MyWork/Project/UA-DETRAC/scripts/Test_TXT_SELECT"
+    src_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/Test_DETRAC_TXT"
+    dst_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/test_label_txt"
 
 def mkdirs(d):
     if not osp.exists(d):
@@ -53,13 +53,11 @@ for seq in seqs:
     for root, dirs, files in os.walk(path):
         files = sorted(files)
         for i in range(len(files)):
-            if i%10== 0: 
+            if files[i][-3:] == 'txt':
+                file_path = path + '/' + files[i]
+                new_file_path = dst_dir + '/' + files[i]
+                shutil.copy(file_path, new_file_path)
                 j += 1
-                if files[i][-3:] == 'txt':
-
-                    file_path = path + '/' + files[i]
-                    new_file_path = dst_dir + '/' + files[i]
-                    shutil.copy(file_path, new_file_path)
                 print(j)
 print("step2 finished!------")
 # print(str(os.listdir(dst_dir)))

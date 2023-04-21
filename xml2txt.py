@@ -1,6 +1,5 @@
 '''
-code by zzg@2021/05/07
-reference to https://www.pythonf.cn/read/111858
+Splitting XML into multiple txt
 '''
 
 import os.path as osp
@@ -14,17 +13,17 @@ def mkdirs(d):
     if not osp.exists(d):
         os.makedirs(d)
 
-FLAG = 0
+FLAG = 1 # 0: test 1: train
 if FLAG == 1:
     ##train
-    seq_root = "../Insight-MVT_Annotation_Train/"#图片
-    xml_root = "../DETRAC-Train-Annotations-XML/" #原始xml标注
-    label_root = "../Train_DETRAC_TXT/" #新生成的标签保存目录
+    seq_root = "./UA-DETRAC/Insight-MVT_Annotation_Train/" # image root
+    xml_root = "./UA-DETRAC/DETRAC-Train-Annotations-XML/" # original xml label
+    label_root = "./Data/Train_DETRAC_TXT/" # new label root
 else:
     ##test
-    seq_root = "../Insight-MVT_Annotation_Test/"#图片
-    xml_root = "../DETRAC-Test-Annotations-XML/" #原始xml标注
-    label_root = "../Test_DETRAC_TXT/" #新生成的标签保存目录
+    seq_root = "./UA-DETRAC/Insight-MVT_Annotation_Test/" # image root
+    xml_root = "./UA-DETRAC/DETRAC-Test-Annotations-XML/" # original xml label
+    label_root = "./Data/Test_DETRAC_TXT/" # new label root
 
 seqs = [s for s in os.listdir(seq_root)]
 
@@ -71,7 +70,7 @@ class XmlTester(XmlReader):
             if root.hasAttribute("name"):
                 seq_name=root.getAttribute("name")
                 # print ("*"*20+"sequence: %s" %seq_name +"*"*20)
-            #获取所有的frame
+            # obtain all the frames
             frames = root.getElementsByTagName('frame')
             
             for frame in frames:
@@ -81,7 +80,7 @@ class XmlTester(XmlReader):
                     # print ("-"*10+"frame_num: %s" %frame_num +"-"*10)
 
                 target_list = frame.getElementsByTagName('target_list')[0]
-                #获取一帧里面所有的target
+                # obtain all the targets
                 targets = target_list.getElementsByTagName('target')
                 targets_dic={}
                 for target in targets:
@@ -102,7 +101,7 @@ class XmlTester(XmlReader):
                     if box.hasAttribute("height"):
                         height=box.getAttribute("height")
                         #print ("  height: %s" %height )
-                    #中心坐标
+                    # center point of the target
                     x=float(left) + float(width)/2
                     y=float(top) + float(height)/2
 
@@ -123,8 +122,8 @@ class XmlTester(XmlReader):
 
 
 tid_curr = 0
-tid_last = -1  #用于在下一个视频序列时，ID数接着上一个视频序列最大值
-for seq in seqs: #每一个视频序列
+tid_last = -1  # Used to follow the maximum ID number of the previous video sequence in the next video sequence
+for seq in seqs: # each video sequence
     print(seq)
     seq_width = 960
     seq_height = 540
@@ -132,13 +131,13 @@ for seq in seqs: #每一个视频序列
     gt_xml = osp.join(xml_root, seq + '.xml')
     reader = XmlTester()
     gt = reader.load(gt_xml)
-    #统计这个序列所有ID
+    # Count all IDs in this sequence
     ids=[]
     for line in gt:
         if not line[1] in ids:
             ids.append(line[1])
     # print(ids)
-    #根据ID将同一ID的不同帧标注放在一起
+    # Label different frames of the same ID together based on their ID
     final_gt=[]
     for id in ids:
         for line in gt:
@@ -164,6 +163,6 @@ for seq in seqs: #每一个视频序列
         label_fpath = osp.join(seq_label_root, 'img{:05d}.txt'.format(fid))
         # label_fpath = osp.join(seq_label_root, 'img{:05d}_{}.txt'.format(fid, str(seq)))
         label_str = '{:d} {:.6f} {:.6f} {:.6f} {:.6f}\n'.format(0,
-                   float(x) / seq_width, float(y) / seq_height, float(w) / seq_width, float(h) / seq_height) #宽高中心坐标归一化
+                   float(x) / seq_width, float(y) / seq_height, float(w) / seq_width, float(h) / seq_height) # Normalization of width and height center coordinates
         with open(label_fpath, 'a') as f:
             f.write(label_str)

@@ -1,6 +1,7 @@
 '''
-code by zzg@2021/05/10
+rename image files in a directory
 '''
+
 import os.path as osp
 import os
 import numpy as np
@@ -8,17 +9,17 @@ import shutil
 import re
 import sys
 
-FLAG = 1
+FLAG = 0 # 0: test 1: train
 if FLAG == 1:
 
     ##train
-    src_dir = "D:/MyWork/Project/UA-DETRAC/Insight-MVT_Annotation_Train/" #image
-    dst_dir = "D:/MyWork/Project/UA-DETRAC/scripts/train_image"
+    src_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/UA-DETRAC/Insight-MVT_Annotation_Train/" # image root
+    dst_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/train_image" #new image root
 
 else:
     ##test
-    src_dir = "D:/MyWork/Project/UA-DETRAC/Insight-MVT_Annotation_Test/" #image
-    dst_dir = "D:/MyWork/Project/UA-DETRAC/scripts/test_image"
+    src_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/UA-DETRAC/Insight-MVT_Annotation_Test/" # image root
+    dst_dir = "D:/MyWork/github/My_Project/UA_DETRAC_Process/Data/test_image" #new image root
 
 def mkdirs(d):
     if not osp.exists(d):
@@ -26,6 +27,7 @@ def mkdirs(d):
 
 mkdirs(dst_dir)
 
+# This operation will modify the original file name and can only be run once
 seqs = [s for s in os.listdir(src_dir)]
 
 for seq in seqs: 
@@ -53,13 +55,10 @@ for seq in seqs:
     for root, dirs, files in os.walk(path):
         files = sorted(files)
         for i in range(len(files)):
-            if i%10== 0: 
+            if (files[i][-3:] == 'jpg' or files[i][-3:] == 'JPG') or files[i][-4:]=='jpeg':
+                file_path = path + '/' + files[i]
+                new_file_path = dst_dir + '/' + files[i]
+                shutil.copy(file_path, new_file_path)
                 j += 1
-                if (files[i][-3:] == 'jpg' or files[i][-3:] == 'JPG') or files[i][-4:]=='jpeg':
-
-                    file_path = path + '/' + files[i]
-                    new_file_path = dst_dir + '/' + files[i]
-                    shutil.copy(file_path, new_file_path)
                 print(j)
 print("step2 finished!------")
-# print(str(os.listdir(dst_dir)))
